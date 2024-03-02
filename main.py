@@ -1,15 +1,8 @@
-"""
-Modifié afficher_message_couleur par message_couleur car techniquement il n'affiche pas mais il renvoie le message.
-Utilisé un dico pour le début pour le choix de map. Evite de faire 3 if. Plus lisible.
-Rajouté le print d'information retiré le print en double.
-Réglé le bug du déplacement de pion. on pouvait traverser toute la map mdrrrr.
+import os
 
-BUG :
-Certaine gestion d'érreur sont mal faite. Des print sans couleur ou alors des appel de fonction qui ne sont pas print.
+# Description: Main file for the game
+### VARIABLES
 
-"""
-
-# Plateaux représentant le début, le milieu et la fin du jeu
 plateau_debut = [
     [1, 1, 1, 1],
     [1, 1, 1, 1],
@@ -27,16 +20,16 @@ plateau_milieu = [
 plateau_fin = [
     [1, 1, 0, 0],
     [1, 1, 0, 0],
-    [0, 0, 0, 2],
-    [2, 2, 2, 2],
+    [2, 0, 0, 0],
+    [0, 2, 0, 0],
 ]
 
 
-LIGNES = {0: "A", 1: "B", 2: "C", 3: "D"}  # Define LIGNES before calling the function
-PIONS = {0: " ", 1: "●", 2: "○"}  # Define the PIONS dictionary
+LIGNES = {0: "A", 1: "B", 2: "C", 3: "D"} 
+PIONS = {0: " ", 1: "●", 2: "○"}  
 
-pions_noirs = 4
-pions_blancs = 4
+pions_noirs = 8
+pions_blancs = 8
 
 def choisir_plateau():       #bon
     plateau_dico = { '1': plateau_debut, '2': plateau_milieu, '3': plateau_fin }
@@ -59,252 +52,144 @@ def afficher_plateau(plateau):   #bon
         print()
 
 
+def demander_mouvement(joueur):   #bon
+    while True:
+        deplacement = input(f"\033[1mJoueur {joueur}, entrez votre deplacement (ex: A1 B2) : \033[0m")
+        if valider_format_saisie(deplacement):
+            case1, case2 = deplacement.split()
+            if est_au_bon_format(case1, case2):
+                return (case1, case2)
+            else:
+                print("\033[91mdeplacement invalide. Veuillez entrer deux cases valides.\033[0m")
+        else:
+            print("\033[91mdeplacement invalide. Veuillez entrer deux cases séparées par un espace.\033[0m")
 
-def _lettre_vers_num(lettre):   #bon
-    return ord(lettre.lower()) - ord('a')
+def valider_format_saisie(deplacement):
+    return len(deplacement) == 5
 
+def est_dans_la_grille(case1, case2):
+    num_valide = ["1", "2", "3", "4"]
+    lettre_valide = "ABCD"
+    return case1[0] in lettre_valide and case1[1] in num_valide and case2[0] in lettre_valide and case2[1] in num_valide
 
-def est_mouvement_capture(ligne_origine, colonne_origine, ligne_destination, colonne_destination):
-    # Déterminer la différence entre les lignes et les colonnes
-    diff_ligne = ligne_destination - ligne_origine
-    diff_colonne = colonne_destination - colonne_origine
+def est_au_bon_format(case1, case2):
+    return est_dans_la_grille(case1, case2) 
 
-    if (abs(diff_ligne) == 2 and abs(diff_colonne) == 0) or (abs(diff_ligne) == 0 and abs(diff_colonne) == 2):
-        return True
+def deplacer_pion(plateau, case1, case2, joueur):   #bon
+    # Convertir les cases en index
+    case1_index = (ord(case1[0].lower()) - ord('a'), int(case1[1])-1)
+    case2_index = (ord(case2[0].lower()) - ord('a'), int(case2[1])-1)
+
+    # Vérifier si le déplacement est valide
+    if plateau[case1_index[0]][case1_index[1]] == joueur:
+        if abs(case1_index[0] - case2_index[0]) == 2 or abs(case1_index[1] - case2_index[1]) == 2:
+            # Vérifier si le pion à sauter est un pion adverse
+            pion_a_sauter_index = ((case1_index[0] + case2_index[0]) // 2, (case1_index[1] + case2_index[1]) // 2)
+            if plateau[pion_a_sauter_index[0]][pion_a_sauter_index[1]] == joueur and plateau[case2_index[0]][case2_index[1]] != 0 and plateau[case2_index[0]][case2_index[1]] != joueur:
+                plateau[case1_index[0]][case1_index[1]] = 0
+                plateau[case2_index[0]][case2_index[1]] = joueur
+                return True
+        # Vérifier si le déplacement est un déplacement normal
+        elif (case1_index[0] == case2_index[0] and abs(case1_index[1] - case2_index[1]) == 1) or (case1_index[1] == case2_index[1] and abs(case1_index[0] - case2_index[0]) == 1):
+            if plateau[case2_index[0]][case2_index[1]] == 0:
+                plateau[case1_index[0]][case1_index[1]] = 0
+                plateau[case2_index[0]][case2_index[1]] = joueur
+                return True
     return False
 
 
-def est_dans_la_grille(ligne, colonne):
-    return ligne < 0 or ligne > 3 or colonne < 0 or colonne > 3
-
-
-def distance(ligne_origine, colonne_origine, ligne_destination, colonne_destination):
-    return abs(ligne_origine - ligne_destination) + abs(colonne_origine - colonne_destination)
-
-
-def mouvement_valide(plateau, ligne_origine, colonne_origine, ligne_destination, colonne_destination, tour):
-    # Valider dans le plateau
-    if ( est_dans_la_grille(ligne_origine, colonne_origine) or est_dans_la_grille(ligne_destination, colonne_destination) ):
-        return False
-
-
-    # Valide que les déplacement en diagonale ou en ligne droite. La distance ne peut pas dépasser 4
-    distance_entre_cases = distance(ligne_origine, colonne_origine, ligne_destination, colonne_destination)
-    if ( distance_entre_cases > 2 or distance_entre_cases % 2 == 1 ):
-        return False
-
-    # Vérifier si le mouvement est un mouvement de capture
-    if abs(ligne_origine - ligne_destination) == 2 or abs(colonne_origine - colonne_destination) == 2:
-        return True
-
-    # Valider mouvement orthogonal et distance de 1 case
-    elif ((abs(ligne_origine - ligne_destination) == 1 and colonne_origine == colonne_destination)
-          or (ligne_origine == ligne_destination and abs(colonne_origine - colonne_destination) == 1)):
-        # Valider si la case de destination est vide
-        if plateau[ligne_destination][colonne_destination] == 0:
-            return True
-        # Gérer le cas où la case de destination est occupée par un pion de la même couleur
-        if (plateau[ligne_destination][colonne_destination] != 0 and
-                plateau[ligne_destination][colonne_destination] == tour):
-            return False
-
-
-def est_orthogonal_distance_2_ou_1(ligne_origine, colonne_origine, ligne_destination, colonne_destination):
-    # Déterminer la différence entre les lignes et les colonnes
-    diff_ligne = ligne_destination - ligne_origine
-    diff_colonne = colonne_destination - colonne_origine
-
-    # Un déplacement est orthogonal et de distance 2 ou 1 si :
-    # - La différence entre les lignes et les colonnes est de 0 ou 1
-    # - La distance entre les deux cases est de 1 ou 2
-    return ((abs(diff_ligne) == 1 and diff_colonne == 0) or (diff_ligne == 0 and abs(diff_colonne) == 1)
-            or (abs(diff_ligne) == 2 and abs(diff_colonne) == 0) or (abs(diff_ligne) == 0 and abs(diff_colonne) == 2))
-
-
-def capturer_pion(plateau, ligne_origine, colonne_origine, ligne_destination, colonne_destination, tour):
-    # Valider saut
-    if abs(ligne_origine - ligne_destination == 2) or abs(colonne_origine - colonne_destination) == 2:
-        ligne_intermediaire = (ligne_origine + ligne_destination) // 2
-        colonne_intermediaire = (colonne_origine + colonne_destination) // 2
-
-        # Valider si le pion intermédiaire est de l'équipe
-        if plateau[ligne_intermediaire][colonne_intermediaire] == plateau[ligne_origine][colonne_origine]:
-            return True
-        print("Vous ne pouvez pas sauter sur un pion enemi")
-        return False
-    return False
-
-
-def effectuer_mouvement(plateau, ligne_origine, colonne_origine, ligne_destination, colonne_destination):
-    plateau[ligne_destination][colonne_destination] = plateau[ligne_origine][colonne_origine]
-    plateau[ligne_origine][colonne_origine] = 0
-
-
-def changer_tour():
-    global tour
-    if tour == 'bleus':
-        tour = 'rouges'
-    else:
-        tour = 'bleus'
-
-
-def compter_pions(plateau):
+def verifier_victoire(plateau):   #bon
     global pions_noirs, pions_blancs
     pions_noirs = 0
     pions_blancs = 0
     for ligne in plateau:
         for case in ligne:
             if case == 1:
-                pions_blancs += 1
-            elif case == 2:
                 pions_noirs += 1
-
-
-def demander_mouvement(tour):
-    origine = None
-    destination = None
-
-    while not origine or not destination:
-        print(message_couleur(f"Tour: {tour}", couleur="jaune", gras=True))
-        # Demander la case d'origine
-        origine = input(message_couleur('Entrez la case d\'origine (lettre et numéro) : ', couleur="cyan", gras=False))
-
-        # Demander la case de destination
-        destination = input(message_couleur('Entrez la case de destination (lettre et numéro) : ', couleur="cyan", gras=False))
-
-        if not _valider_case(origine) or not _valider_case(destination):
-            print(message_couleur("Mouvement invalide : format incorrect.", couleur="rouge"))
-            origine = None
-            destination = None
-
-    ligne_origine = _lettre_vers_num(origine[0])
-    colonne_origine = int(origine[1]) - 1
-    ligne_destination = _lettre_vers_num(destination[0])
-    colonne_destination = int(destination[1]) - 1
-
-    return ligne_origine, colonne_origine, ligne_destination, colonne_destination
-
-
-
-def _valider_case(case):
-    if len(case) != 2:
-        return False
-    if not case[0].isalpha():
-        return False
-    if not case[1].isdigit():
-        return False
-    return True
-
-
-def message_couleur(message, couleur="reset", gras=False, italique=False):
-    codes_style = {
-        "gras": "\033[1m",
-        "italique": "\033[3m",
-        "rien": ""
-    }
-
-    codes_couleur = {
-        "reset": "\033[0m",
-        "noir": "\033[30m",
-        "rouge": "\033[31m",
-        "vert": "\033[32m",
-        "jaune": "\033[33m",
-        "bleu": "\033[34m",
-        "magenta": "\033[35m",
-        "cyan": "\033[36m",
-        "blanc": "\033[37m",
-        "fond_noir": "\033[40m",
-        "fond_rouge": "\033[41m",
-        "fond_vert": "\033[42m",
-        "fond_jaune": "\033[43m",
-        "fond_bleu": "\033[44m",
-        "fond_magenta": "\033[45m",
-        "fond_cyan": "\033[46m",
-        "fond_blanc": "\033[47m",
-    }
-
-    if couleur not in codes_couleur:
-        print("Couleur invalide. Utilisation de la couleur par défaut.")
-        couleur = "reset"
-
-    if gras and italique:
-        print("Impossible d'appliquer deux styles simultanément. Utilisation du style par défaut.")
-        gras = False
-        italique = False
-
-    code_couleur = codes_couleur.get(couleur.lower(), "")
-    code_style = codes_style.get("gras" if gras else "italique" if italique else "rien")
-
-    message_couleur = f"{code_couleur}{code_style}{message}{codes_couleur['reset']}"
-    return message_couleur
-
-def fin_du_jeu(plateau):
-    global pions_noirs, pions_blancs
-
-    # Vérifier si le nombre de pions est inférieur à 2
-    if pions_noirs < 2 or pions_blancs < 2:
-        return True
-
-    # Déterminer le tour actuel
-    tour = "bleu" if pions_noirs % 2 == 1 else "rouge"
-
-    # Parcourir toutes les cases du plateau
-    for ligne in range(4):
-        for colonne in range(4):
-            # Vérifier si le pion a des mouvements possibles
-            for ligne_destination in range(4):
-                for colonne_destination in range(4):
-                    if mouvement_valide(plateau,ligne, colonne, ligne_destination, colonne_destination, tour):
-                        # Si un mouvement est possible, le joueur n'est pas mat
-                        return False
-
-    # Si aucun mouvement n'est possible, le joueur est mat
-    return True
-
-
-def boucle_jeu():
-    print("Choisissez un plateau :")
-    print("1. Début du jeu")
-    print("2. Milieu du jeu")
-    print("3. Fin du jeu")
-    tour = 'bleus'
-    plateau = choisir_plateau()  # Initialiser la variable tour
-    afficher_plateau(plateau)
-    while not fin_du_jeu(plateau):
-        # Afficher le plateau choisi
-
-        # Demander le mouvement au joueur actuel
-        ligne_origine, colonne_origine, ligne_destination, colonne_destination = demander_mouvement(tour)
-
-        # Valider le mouvement
-        est_mouvement_valide = mouvement_valide(plateau, ligne_origine, colonne_origine, ligne_destination, colonne_destination, tour)
-
-        # Vérifier si le mouvement est valide et l'effectuer
-        if est_mouvement_valide:
-            if est_mouvement_capture(ligne_origine, colonne_origine, ligne_destination, colonne_destination):
-                if capturer_pion(plateau, ligne_origine, colonne_origine, ligne_destination, colonne_destination, tour):
-                    effectuer_mouvement(plateau, ligne_origine, colonne_origine, ligne_destination, colonne_destination)
-                    compter_pions(plateau)
-                else:
-                    print(message_couleur("Vous ne pouvez pas sauter sur un pion ennemi.", couleur="rouge"))
-                    continue  # Revenir au début de la boucle pour redemander le mouvement
-            else:
-                effectuer_mouvement(plateau, ligne_origine, colonne_origine, ligne_destination, colonne_destination)
+            elif case == 2:
+                pions_blancs += 1
+    if pions_noirs == 1:
+        return 2
+    elif pions_blancs == 1:
+        return 1
+    else:
+        if not peut_deplacer(plateau, 1) and not peut_deplacer(plateau, 2):
+            return -1
         else:
-            print(message_couleur("Mouvement invalide. Veuillez réessayer.", couleur="rouge"))
-            afficher_plateau()
-            continue  # Revenir au début de la boucle pour redemander le mouvement
+            return 0
 
-        # Changer de tour
-        tour = 'rouges' if tour == 'bleus' else 'bleus'
+def peut_deplacer(plateau, joueur):
+    for ligne_index, ligne in enumerate(plateau):
+        for case_index, case in enumerate(ligne):
+            if case == joueur:
+                if peut_sauter(plateau, joueur, ligne_index, case_index) or peut_deplacer_normal(plateau, joueur, ligne_index, case_index):
+                    return True
+    return False
 
-        # Afficher l'état actuel du jeu
-        afficher_plateau(plateau)
-        print(message_couleur('Tour: ' + tour, couleur="jaune", gras=True))
-        print(message_couleur('Pions Bleus: ' + str(pions_noirs), couleur="magenta"))
-        print(message_couleur('Pions Rouges: ' + str(pions_blancs), couleur="magenta"))
+def peut_sauter(plateau, joueur, ligne_index, case_index):
+    if ligne_index >= 2 and case_index >= 2 and plateau[ligne_index-1][case_index-1] == joueur and plateau[ligne_index-2][case_index-2] == 0:
+        return True
+    if ligne_index >= 2 and case_index <= 1 and plateau[ligne_index-1][case_index+1] == joueur and plateau[ligne_index-2][case_index+2] == 0:
+        return True
+    if ligne_index <= 1 and case_index >= 2 and plateau[ligne_index+1][case_index-1] == joueur and plateau[ligne_index+2][case_index-2] == 0:
+        return True
+    if ligne_index <= 1 and case_index <= 1 and plateau[ligne_index+1][case_index+1] == joueur and plateau[ligne_index+2][case_index+2] == 0:
+        return True
+    return False
 
-    print(message_couleur("Le jeu est terminé.", couleur="vert", gras=True))
+def peut_deplacer_normal(plateau, joueur, ligne_index, case_index):
+    if ligne_index >= 1 and case_index >= 1 and plateau[ligne_index-1][case_index-1] == 0:
+        return True
+    if ligne_index >= 1 and case_index <= 2 and plateau[ligne_index-1][case_index+1] == 0:
+        return True
+    if ligne_index <= 2 and case_index >= 1 and plateau[ligne_index+1][case_index-1] == 0:
+        return True
+    if ligne_index <= 2 and case_index <= 2 and plateau[ligne_index+1][case_index+1] == 0:
+        return True
+    return False
 
-#if __name__ == "__main__":
-    #boucle_jeu()
+
+def clear_console():
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')   
+
+
+def afficher_regles():
+    print("\033[1m\033[48;2;0;0;255mRègles du jeu de Dames:\033[0m")
+    print("\033[1m\033[48;2;0;0;255m- Le jeu se joue sur un plateau de 4x4 cases.\033[0m")
+    print("\033[1m\033[48;2;0;0;255m- Chaque joueur a 8 pions, représentés par des cercles pleins (●) ou vides (○).\033[0m")
+    print("\033[1m\033[48;2;0;0;255m- Les joueurs jouent à tour de rôle en déplaçant un de leurs pions.\033[0m")
+    print("\033[1m\033[48;2;0;0;255m- Si un pion atteint la dernière rangée de l'adversaire, il est promu en une dame et peut se déplacer dans toutes les directions.\033[0m")
+    print("\033[1m\033[48;2;0;0;255m- Le jeu se termine lorsque l'un des joueurs n'a plus que 1 pion ou qu'un joueur ne peut plus effectuer de déplacement.\033[0m")
+    print("\033[1m\033[48;2;0;0;255m- Le joueur qui capture tous les pions de l'adversaire ou qui empêche l'adversaire de faire un déplacement gagne la partie.\033[0m")
+
+def main():   #bon
+    clear_console()
+    print("\033[1m\033[48;2;0;0;255mBienvenue dans le jeu des Canaries !\033[0m")
+    print("Voulez vous afficher les règles du jeu ?")
+    reponse = input("Entrez oui ou non : ")
+    if reponse.lower() == "oui":
+        afficher_regles()
+    plateau = choisir_plateau()
+    afficher_plateau(plateau)
+    joueur = 1
+    while True:
+        deplacement = demander_mouvement(joueur)
+        if deplacer_pion(plateau, deplacement[0], deplacement[1], joueur):
+            clear_console()
+            afficher_plateau(plateau)
+            victoire = verifier_victoire(plateau)
+            if victoire:
+                print(f"\033[33m\033[1mLe joueur {victoire} a gagné !\033[0m")
+                break
+            joueur = 1 if joueur == 2 else 2
+        else:
+            print("\033[91mDeplacement invalide. Veuillez entrer un deplacement valide.\033[0m")
+        
+    print("Merci d'avoir joué !")
+
+
+
+main()  
