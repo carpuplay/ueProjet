@@ -1,4 +1,5 @@
-# ueProjet
+# ueProjet Jeu des Canaries
+
 ## Description
 This repository contains the project for the UE Projet course. It includes the "Jeux des Canaries" game.
 
@@ -9,6 +10,7 @@ To run the game, follow these steps:
 3. Install the dependencies: `npm install`
 4. Start the game: `npm start`
 
+
 ## Usage
 Once the game is running, follow the on-screen instructions to play. Enjoy!
 
@@ -16,4 +18,4 @@ Once the game is running, follow the on-screen instructions to play. Enjoy!
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
 ## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the MIT License. See the [GNU v2.0](LICENSE) file for more details.
