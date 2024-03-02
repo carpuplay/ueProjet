@@ -10,6 +10,10 @@ To run the game, follow these steps:
 3. Install the dependencies: `npm install`
 4. Start the game: `npm start`
 
+## System Compatibility
+The "Jeux des Canaries" game is compatible with the following operating systems:
+![Static Badge](https://img.shields.io/badge/Release-Stable-Green)
+
 
 ## Usage
 Once the game is running, follow the on-screen instructions to play. Enjoy!
