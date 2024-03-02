@@ -1,5 +1,7 @@
 # ueProjet Jeu des Canaries
 ![Static Badge](https://img.shields.io/badge/Release-Stable-Green)
+![Static Badge](https://img.shields.io/badge/OS-Windows-geen?logo=Windows)
+
 
 ## Description
 This repository contains the project for the UE Projet course. It includes the "Jeux des Canaries" game.
