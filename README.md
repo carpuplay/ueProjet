@@ -1,4 +1,5 @@
 # ueProjet Jeu des Canaries
+![Static Badge](https://img.shields.io/badge/Release-Stable-Green)
 
 ## Description
 This repository contains the project for the UE Projet course. It includes the "Jeux des Canaries" game.
@@ -12,7 +13,10 @@ To run the game, follow these steps:
 
 ## System Compatibility
 The "Jeux des Canaries" game is compatible with the following operating systems:
-![Static Badge](https://img.shields.io/badge/Release-Stable-Green)
+- Windows 10
+- macOS
+- Linux
+
 
 
 ## Usage
