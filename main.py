@@ -1,5 +1,41 @@
 import os
 
+def test_choisir_plateau():
+    pass
+
+def test_afficher_plateau():
+    pass
+
+def test_demander_mouvement():
+    pass
+
+def test_valider_format_saisie():
+    pass
+
+def test_est_dans_la_grille():
+    pass
+
+def test_est_au_bon_format():
+    pass
+
+def test_deplacer_pion():
+    pass
+
+def test_verifier_victoire():
+    pass
+
+def test_peut_deplacer():
+    pass
+
+def test_peut_sauter():
+    pass
+
+def test_peut_deplacer_normal():
+    pass
+
+
+
+
 # Description: Main file for the game
 ### VARIABLES
 
