@@ -1,6 +1,10 @@
 # ueProjet Jeu des Canaries
 ![Static Badge](https://img.shields.io/badge/Release-Stable-Green)
 ![Static Badge](https://img.shields.io/badge/OS-Windows-geen?logo=Windows)
+![Static Badge](https://img.shields.io/badge/Required-%3E3.11-yellow?logo=python)
+
+
+
 
 
 ## Description
