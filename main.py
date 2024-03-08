@@ -1,37 +1,6 @@
 import os
 
-def test_choisir_plateau():
-    pass
 
-def test_afficher_plateau():
-    pass
-
-def test_demander_mouvement():
-    pass
-
-def test_valider_format_saisie():
-    pass
-
-def test_est_dans_la_grille():
-    pass
-
-def test_est_au_bon_format():
-    pass
-
-def test_deplacer_pion():
-    pass
-
-def test_verifier_victoire():
-    pass
-
-def test_peut_deplacer():
-    pass
-
-def test_peut_sauter():
-    pass
-
-def test_peut_deplacer_normal():
-    pass
 
 
 
@@ -61,8 +30,8 @@ plateau_fin = [
 ]
 
 
-LIGNES = {0: "A", 1: "B", 2: "C", 3: "D"} 
-PIONS = {0: " ", 1: "●", 2: "○"}  
+LIGNES = {0: "A", 1: "B", 2: "C", 3: "D"}
+PIONS = {0: " ", 1: "●", 2: "○"}
 
 pions_noirs = 8
 pions_blancs = 8
@@ -101,15 +70,12 @@ def demander_mouvement(joueur):   #bon
             print("\033[91mdeplacement invalide. Veuillez entrer deux cases séparées par un espace.\033[0m")
 
 def valider_format_saisie(deplacement):
-    return len(deplacement) == 5
-
-def est_dans_la_grille(case1, case2):
-    num_valide = ["1", "2", "3", "4"]
-    lettre_valide = "ABCD"
-    return case1[0] in lettre_valide and case1[1] in num_valide and case2[0] in lettre_valide and case2[1] in num_valide
+    return len(deplacement) == 5 and deplacement[2] == " "
 
 def est_au_bon_format(case1, case2):
-    return est_dans_la_grille(case1, case2) 
+  num_valide = ["1", "2", "3", "4"]
+  lettre_valide = "ABCD"
+  return case1[0] in lettre_valide and case1[1] in num_valide and case2[0] in lettre_valide and case2[1] in num_valide
 
 def deplacer_pion(plateau, case1, case2, joueur):   #bon
     # Convertir les cases en index
@@ -189,7 +155,7 @@ def clear_console():
     if os.name == 'nt':
         os.system('cls')
     else:
-        os.system('clear')   
+        os.system('clear')
 
 
 def afficher_regles():
@@ -223,9 +189,69 @@ def main():   #bon
             joueur = 1 if joueur == 2 else 2
         else:
             print("\033[91mDeplacement invalide. Veuillez entrer un deplacement valide.\033[0m")
-        
+
     print("Merci d'avoir joué !")
 
 
+def test_choisir_plateau():
+  pass
 
-main()  
+
+def test_afficher_plateau():
+  pass
+
+
+def test_demander_mouvement():
+  pass
+
+
+def test_valider_format_saisie():
+  assert valider_format_saisie("A1 B2") == True, "Test 1: valider_format_saisie('A1 B2') == True"
+  assert valider_format_saisie("A1B2") == False, "Test 2: valider_format_saisie('A1B2') == False"
+  assert valider_format_saisie("A1 B 2") == False, "Test 3: valider_format_saisie('A1 B 2') == False"
+  assert valider_format_saisie("A1 B2 ") == False, "Test 4: valider_format_saisie('A1 B2 ') == False"
+  assert valider_format_saisie("A1XB2") == False, "Test 5: valider_format_saisie('A1XB2') == False"
+  print("Tous les tests de valider_format_saisie() sont passés.")
+
+
+def test_est_au_bon_format():
+  assert est_au_bon_format("A1", "B2") == True, "Test 1: est_au_bon_format('A1', 'B2') == True"
+  assert est_au_bon_format("A1", "B4") == True, "Test 2: est_au_bon_format('A1', 'B4') == True"
+  assert est_au_bon_format("A1", "B5") == False, "Test 2: est_au_bon_format('A1', 'B5') == False"
+  assert est_au_bon_format("A1", "E2") == False, "Test 3: est_au_bon_format('A1', 'E2') == False"
+  assert est_au_bon_format("A1", "E5") == False, "Test 4: est_au_bon_format('A1', 'B') == False"
+  assert est_au_bon_format("D5", "B2") == False, "Test 5: est_au_bon_format('D5', 'B2') == False"
+  print("Tous les tests de est_au_bon_format() sont passés.")
+
+
+def test_deplacer_pion():
+  pass
+
+
+def test_verifier_victoire():
+  pass
+
+
+def test_peut_deplacer():
+  pass
+
+def test_peut_sauter():
+  assert peut_sauter(plateau_debut, 1, 0, 0) == True, "Test 1: peut_sauter(plateau_debut, 1, 0, 0) == True"
+  print("Tous les tests de peut_sauter() sont passés.")
+
+def test_peut_deplacer_normal():
+  pass
+
+test_choisir_plateau()
+test_afficher_plateau()
+test_demander_mouvement()
+test_valider_format_saisie()
+test_est_au_bon_format()
+test_deplacer_pion()
+test_verifier_victoire()
+test_peut_deplacer()
+test_peut_sauter()
+test_peut_deplacer_normal()
+print("Tout les tests sont passés.")
+
+main()
