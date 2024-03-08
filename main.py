@@ -1,12 +1,6 @@
 import os
 import time
 
-
-
-
-
-
-
 # Description: Main file for the game
 ### VARIABLES
 
@@ -240,16 +234,13 @@ def test_deplacer_pion():
 
 
 def test_verifier_victoire():
-    plateau = [
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2, 2, 2, 2],
-        [2, 2, 2, 2],
+    plateau1 = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 0]
     ]
-    global pions_noirs, pions_blancs
-    pions_noirs = 8
-    pions_blancs = 8
-    assert verifier_victoire(plateau) == 0, "Test 1: verifier_victoire(plateau) == 0"
+    assert verifier_victoire(plateau1) == 2, "Test 1" 
     
     plateau = [
         [1, 1, 0, 0],
@@ -257,29 +248,15 @@ def test_verifier_victoire():
         [2, 2, 2, 2],
         [2, 2, 2, 2],
     ]
-    pions_noirs = 8
-    pions_blancs = 8
-    assert verifier_victoire(plateau) == 0, "Test 2: verifier_victoire(plateau) == 0"
+    assert verifier_victoire(plateau) == 0, "Test 2"
     
     plateau = [
-        [1, 1, 0, 0],
-        [1, 1, 0, 0],
-        [2, 0, 0, 0],
-        [0, 2, 0, 0],
-    ]
-    pions_noirs = 8
-    pions_blancs = 8
-    assert verifier_victoire(plateau) == -1, "Test 3: verifier_victoire(plateau) == -1"
-    
-    plateau = [
-        [1, 1, 0, 0],
-        [1, 1, 0, 0],
-        [2, 0, 0, 0],
+        [2, 2, 0, 0],
+        [2, 2, 0, 0],
+        [1, 0, 0, 0],
         [0, 0, 0, 0],
     ]
-    pions_noirs = 8
-    pions_blancs = 8
-    assert verifier_victoire(plateau) == 2, "Test 4: verifier_victoire(plateau) == 2"
+    assert verifier_victoire(plateau) == 2, "Test 4"
     
     plateau = [
         [0, 0, 0, 0],
@@ -287,9 +264,7 @@ def test_verifier_victoire():
         [2, 0, 0, 0],
         [0, 0, 0, 0],
     ]
-    pions_noirs = 8
-    pions_blancs = 8
-    assert verifier_victoire(plateau) == 1, "Test 5: verifier_victoire(plateau) == 1"
+    assert verifier_victoire(plateau) == 1, "Test 5"
     
     #print("\033[33mTEST verifier_victoire() OK\033[0m")
 
@@ -397,8 +372,6 @@ def test_peut_deplacer_normal():
     #print("\033[33mTEST peut_deplacer_normal() OK\033[0m")
 
 
-import time
-
 def run_tests_with_progress():
     test_functions = [
         test_choisir_plateau,
@@ -407,7 +380,7 @@ def run_tests_with_progress():
         test_valider_format_saisie,
         test_est_au_bon_format,
         test_deplacer_pion,
-        test_verifier_victoire,
+        test_verifier_victoire, #7
         test_peut_deplacer,
         test_peut_sauter,
         test_peut_deplacer_normal
@@ -434,7 +407,17 @@ def run_tests_with_progress():
     print("\nRésultats des Tests:")
     print(f"Tests réussits: \033[32m{tests_passed}/{total_tests}\033[0m")  # Green color for passed tests
     print(f"Tests échoués: \033[31m{tests_failed}/{total_tests}\033[0m")  # Red color for failed tests
-    time.sleep(3.5)  # Simulating test results display time
+    time.sleep(2)
+
+    for i in range(3):
+        clear_console()
+        print("\033[5;37;40mExecution du programme principal...\033[0m") 
+        time.sleep(0.5)
+        clear_console()
+        print("\033[5;30;40mExecution du programme principal...\033[0m") 
+        time.sleep(0.5)
+        i += 1
+    main()
 
 run_tests_with_progress()
 
