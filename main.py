@@ -1,4 +1,6 @@
 import os
+import time
+
 
 
 
@@ -193,8 +195,9 @@ def main():   #bon
     print("Merci d'avoir joué !")
 
 
+
 def test_choisir_plateau():
-  pass
+    pass
 
 
 def test_afficher_plateau():
@@ -202,56 +205,239 @@ def test_afficher_plateau():
 
 
 def test_demander_mouvement():
-  pass
+    pass
 
 
 def test_valider_format_saisie():
-  assert valider_format_saisie("A1 B2") == True, "Test 1: valider_format_saisie('A1 B2') == True"
-  assert valider_format_saisie("A1B2") == False, "Test 2: valider_format_saisie('A1B2') == False"
-  assert valider_format_saisie("A1 B 2") == False, "Test 3: valider_format_saisie('A1 B 2') == False"
-  assert valider_format_saisie("A1 B2 ") == False, "Test 4: valider_format_saisie('A1 B2 ') == False"
-  assert valider_format_saisie("A1XB2") == False, "Test 5: valider_format_saisie('A1XB2') == False"
-  print("Tous les tests de valider_format_saisie() sont passés.")
+    assert valider_format_saisie("A1 B2") == True
+    assert valider_format_saisie("A1B2") == False
+    assert valider_format_saisie("A1 B 2") == False
+    assert valider_format_saisie("A1 B2 ") == False
+    assert valider_format_saisie("A1XB2") == False
+    #print("\033[33mTEST valider_format_saisie() OK.\033[0m")
 
 
 def test_est_au_bon_format():
-  assert est_au_bon_format("A1", "B2") == True, "Test 1: est_au_bon_format('A1', 'B2') == True"
-  assert est_au_bon_format("A1", "B4") == True, "Test 2: est_au_bon_format('A1', 'B4') == True"
-  assert est_au_bon_format("A1", "B5") == False, "Test 2: est_au_bon_format('A1', 'B5') == False"
-  assert est_au_bon_format("A1", "E2") == False, "Test 3: est_au_bon_format('A1', 'E2') == False"
-  assert est_au_bon_format("A1", "E5") == False, "Test 4: est_au_bon_format('A1', 'B') == False"
-  assert est_au_bon_format("D5", "B2") == False, "Test 5: est_au_bon_format('D5', 'B2') == False"
-  print("Tous les tests de est_au_bon_format() sont passés.")
+    assert est_au_bon_format("A1", "B2") == True
+    assert est_au_bon_format("A1", "B4") == True
+    assert est_au_bon_format("A1", "B5") == False
+    assert est_au_bon_format("A1", "E2") == False
+    assert est_au_bon_format("A1", "E5") == False
+    assert est_au_bon_format("D5", "B2") == False
+    #print("\033[33m TEST est_au_bon_format() OK\033[0m")
 
 
 def test_deplacer_pion():
-  pass
+    plateau = [
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ]
+    assert deplacer_pion(plateau, "A1", "C1", 1) == True
+    assert deplacer_pion(plateau, "A1", "A2", 1) == False
+    #print("\033[33mTEST deplacer_pion() OK\033[0m")
 
 
 def test_verifier_victoire():
-  pass
+    plateau = [
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ]
+    global pions_noirs, pions_blancs
+    pions_noirs = 8
+    pions_blancs = 8
+    assert verifier_victoire(plateau) == 0, "Test 1: verifier_victoire(plateau) == 0"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ]
+    pions_noirs = 8
+    pions_blancs = 8
+    assert verifier_victoire(plateau) == 0, "Test 2: verifier_victoire(plateau) == 0"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 0, 0],
+        [2, 0, 0, 0],
+        [0, 2, 0, 0],
+    ]
+    pions_noirs = 8
+    pions_blancs = 8
+    assert verifier_victoire(plateau) == -1, "Test 3: verifier_victoire(plateau) == -1"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 0, 0],
+        [2, 0, 0, 0],
+        [0, 0, 0, 0],
+    ]
+    pions_noirs = 8
+    pions_blancs = 8
+    assert verifier_victoire(plateau) == 2, "Test 4: verifier_victoire(plateau) == 2"
+    
+    plateau = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [2, 0, 0, 0],
+        [0, 0, 0, 0],
+    ]
+    pions_noirs = 8
+    pions_blancs = 8
+    assert verifier_victoire(plateau) == 1, "Test 5: verifier_victoire(plateau) == 1"
+    
+    #print("\033[33mTEST verifier_victoire() OK\033[0m")
 
 
 def test_peut_deplacer():
-  pass
+    plateau = [
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ]
+    assert peut_deplacer(plateau, 1) == True, "Test 1: peut_deplacer(plateau, 1) == True"
+    assert peut_deplacer(plateau, 2) == True, "Test 2: peut_deplacer(plateau, 2) == True"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ]
+    assert peut_deplacer(plateau, 1) == True, "Test 3: peut_deplacer(plateau, 1) == True"
+    assert peut_deplacer(plateau, 2) == True, "Test 4: peut_deplacer(plateau, 2) == True"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 0, 0],
+        [2, 0, 0, 0],
+        [0, 2, 0, 0],
+    ]
+    assert peut_deplacer(plateau, 1) == True, "Test 5: peut_deplacer(plateau, 1) == True"
+    assert peut_deplacer(plateau, 2) == True, "Test 6: peut_deplacer(plateau, 2) == True"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 0, 0],
+        [2, 0, 0, 0],
+        [0, 0, 0, 0],
+    ]
+    assert peut_deplacer(plateau, 1) == False, "Test 7: peut_deplacer(plateau, 1) == False"
+    assert peut_deplacer(plateau, 2) == False, "Test 8: peut_deplacer(plateau, 2) == False"
+    
+    plateau = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [2, 0, 0, 0],
+        [0, 0, 0, 0],
+    ]
+    assert peut_deplacer(plateau, 1) == False, "Test 9: peut_deplacer(plateau, 1) == False"
+    assert peut_deplacer(plateau, 2) == False, "Test 10: peut_deplacer(plateau, 2) == False"
+    
+    #print("\033[33mTEST peut_deplacer() OK\033[0m")
+
 
 def test_peut_sauter():
-  assert peut_sauter(plateau_debut, 1, 0, 0) == True, "Test 1: peut_sauter(plateau_debut, 1, 0, 0) == True"
-  print("Tous les tests de peut_sauter() sont passés.")
+    assert peut_sauter(plateau_debut, 1, 0, 0) == True, "Test 1: peut_sauter(plateau_debut, 1, 0, 0) == True"
+    #print("\033[33mTEST peut_sauter() OK\033[0m")
+
 
 def test_peut_deplacer_normal():
-  pass
+    plateau = [
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ]
+    assert peut_deplacer_normal(plateau, 1, 0, 0) == False, "Test 1: peut_deplacer_normal(plateau, 1, 0, 0) == False"
+    assert peut_deplacer_normal(plateau, 2, 0, 0) == False, "Test 2: peut_deplacer_normal(plateau, 2, 0, 0) == False"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [2, 2, 2, 2],
+    ]
+    assert peut_deplacer_normal(plateau, 1, 0, 0) == False, "Test 3: peut_deplacer_normal(plateau, 1, 0, 0) == False"
+    assert peut_deplacer_normal(plateau, 2, 0, 0) == False, "Test 4: peut_deplacer_normal(plateau, 2, 0, 0) == False"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 0, 0],
+        [2, 0, 0, 0],
+        [0, 2, 0, 0],
+    ]
+    assert peut_deplacer_normal(plateau, 1, 0, 0) == True, "Test 5: peut_deplacer_normal(plateau, 1, 0, 0) == True"
+    assert peut_deplacer_normal(plateau, 2, 0, 0) == True, "Test 6: peut_deplacer_normal(plateau, 2, 0, 0) == True"
+    
+    plateau = [
+        [1, 1, 0, 0],
+        [1, 1, 0, 0],
+        [2, 0, 0, 0],
+        [0, 0, 0, 0],
+    ]
+    assert peut_deplacer_normal(plateau, 1, 0, 0) == False, "Test 7: peut_deplacer_normal(plateau, 1, 0, 0) == False"
+    assert peut_deplacer_normal(plateau, 2, 0, 0) == False, "Test 8: peut_deplacer_normal(plateau, 2, 0, 0) == False"
+    
+    plateau = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [2, 0, 0, 0],
+        [0, 0, 0, 0],
+    ]
+    assert peut_deplacer_normal(plateau, 1, 0, 0) == False, "Test 9: peut_deplacer_normal(plateau, 1, 0, 0) == False"
+    assert peut_deplacer_normal(plateau, 2, 0, 0) == False, "Test 10: peut_deplacer_normal(plateau, 2, 0, 0) == False"
+    
+    #print("\033[33mTEST peut_deplacer_normal() OK\033[0m")
 
-test_choisir_plateau()
-test_afficher_plateau()
-test_demander_mouvement()
-test_valider_format_saisie()
-test_est_au_bon_format()
-test_deplacer_pion()
-test_verifier_victoire()
-test_peut_deplacer()
-test_peut_sauter()
-test_peut_deplacer_normal()
-print("Tout les tests sont passés.")
 
-main()
+import time
+
+def run_tests_with_progress():
+    test_functions = [
+        test_choisir_plateau,
+        test_afficher_plateau,
+        test_demander_mouvement,
+        test_valider_format_saisie,
+        test_est_au_bon_format,
+        test_deplacer_pion,
+        test_verifier_victoire,
+        test_peut_deplacer,
+        test_peut_sauter,
+        test_peut_deplacer_normal
+    ]
+    total_tests = len(test_functions)
+    tests_passed = 0
+    tests_failed = 0
+    clear_console()
+    print("Vérification des fonctions...")
+    for i, test_func in enumerate(test_functions, start=1):
+        time.sleep(0.5)  # Simulating test execution time
+        print(f"Éxecution du test {i}/{total_tests}...")
+        try:
+            test_func()  # Call the test function
+            tests_passed += 1
+            print(f"\033[32mTest {i}/{total_tests} réussi\033[0m")  # Green color for passed tests
+        except AssertionError as e:
+            tests_failed += 1
+            print(f"\033[31mTest {i}/{total_tests} échoué: {e}\033[0m")  # Red color for failed tests
+        except Exception as e:
+            tests_failed += 1
+            print(f"\033[31mTest {i}/{total_tests} échoué: {e}\033[0m")  # Red color for failed tests
+
+    print("\nRésultats des Tests:")
+    print(f"Tests réussits: \033[32m{tests_passed}/{total_tests}\033[0m")  # Green color for passed tests
+    print(f"Tests échoués: \033[31m{tests_failed}/{total_tests}\033[0m")  # Red color for failed tests
+    time.sleep(3.5)  # Simulating test results display time
+
+run_tests_with_progress()
+
+
+#test()
+#main()
