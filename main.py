@@ -103,21 +103,47 @@ def deplacer_pion(plateau, case1, case2, joueur):   #bon
 
 def verifier_victoire(plateau, tour):
     """
-    Check if there is a winner in the game.
+    Verifica si hay un ganador en el juego.
 
     Args:
-        plateau (list): The game board.
-        tour (int): The current player's turn.
+        plateau (list): El tablero de juego.
+        tour (int): El turno del jugador actual.
 
     Returns:
-        int: The result of the game.
-            - 1: If the black player wins.
-            - 2: If the white player wins.
-            - 0: If the game continues.
-            - -1: If it's a draw.
+        int: El resultado del juego.
+            - 1: Si gana el jugador negro.
+            - 2: Si gana el jugador blanco.
+            - 0: Si el juego continúa.
+            - -1: Si es un empate.
 
     """
-    global pions_noirs, pions_blancs
+    pions_noirs, pions_blancs = compter_pions(plateau)
+    
+    if pions_noirs < 2 and pions_blancs >= 2:
+        return 2  # Gana el jugador blanco
+    elif pions_blancs < 2 and pions_noirs >= 2:
+        return 1  # Gana el jugador negro
+    elif pions_noirs < 2 and pions_blancs < 2:
+        return -1  # Empate
+    elif not peut_deplacer(plateau, 1) and not peut_deplacer(plateau, 2):
+        return -1  # Empate (ningún jugador puede moverse)
+    elif not peut_deplacer(plateau, 1):
+        return 2  # Gana el jugador blanco (el negro no puede moverse)
+    elif not peut_deplacer(plateau, 2):
+        return 1  # Gana el jugador negro (el blanco no puede moverse)
+    else:
+        return 0  # Continúa el juego
+
+def compter_pions(plateau):
+    """
+    Cuenta el número de fichas de cada jugador en el tablero.
+
+    Args:
+        plateau (list): El tablero de juego.
+
+    Returns:
+        tuple: Una tupla con el número de fichas para el jugador negro y el jugador blanco, respectivamente.
+    """
     pions_noirs = 0
     pions_blancs = 0
     for ligne in plateau:
@@ -126,19 +152,7 @@ def verifier_victoire(plateau, tour):
                 pions_noirs += 1
             elif case == 2:
                 pions_blancs += 1
-    if pions_noirs == 1:
-        return 2
-    elif pions_blancs == 1:
-        return 1
-    else:
-        if not peut_deplacer(plateau, 1) and not peut_deplacer(plateau, 2):
-            return -1 # Egalité (presque impossible à atteindre)
-        elif not peut_deplacer(plateau, 1):
-            return 2  # Joueur blanc gagne
-        elif not peut_deplacer(plateau, 2):
-            return 1  # Joueur noir gagne
-        else:
-            return 0  # Continuation du jeu
+    return pions_noirs, pions_blancs
 
 
 
@@ -154,11 +168,11 @@ def peut_deplacer(plateau, joueur):
 def peut_sauter(plateau, joueur, ligne_index, case_index):
     if ligne_index >= 2 and case_index >= 2 and plateau[ligne_index-1][case_index-1] == joueur and plateau[ligne_index-2][case_index-2] == 0:
         return True
-    if ligne_index >= 2 and case_index <= len(plateau[0]) - 3 and plateau[ligne_index-1][case_index+1] == joueur and plateau[ligne_index-2][case_index+2] == 0:
+    elif ligne_index >= 2 and case_index <= len(plateau[0]) - 3 and plateau[ligne_index-1][case_index+1] == joueur and plateau[ligne_index-2][case_index+2] == 0:
         return True
-    if ligne_index <= len(plateau) - 3 and case_index >= 2 and plateau[ligne_index+1][case_index-1] == joueur and plateau[ligne_index+2][case_index-2] == 0:
+    elif ligne_index <= len(plateau) - 3 and case_index >= 2 and plateau[ligne_index+1][case_index-1] == joueur and plateau[ligne_index+2][case_index-2] == 0:
         return True
-    if ligne_index <= len(plateau) - 3 and case_index <= len(plateau[0]) - 3 and plateau[ligne_index+1][case_index+1] == joueur and plateau[ligne_index+2][case_index+2] == 0:
+    elif ligne_index <= len(plateau) - 3 and case_index <= len(plateau[0]) - 3 and plateau[ligne_index+1][case_index+1] == joueur and plateau[ligne_index+2][case_index+2] == 0:
         return True
     return False
 
