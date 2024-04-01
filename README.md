@@ -10,7 +10,7 @@
 ## Description
 This repository contains the project for the UE Projet course. It includes the "Jeux des Canaries" game.
 
-## Installation https://img.shields.io/badge/Difficulty-Advanced-yellow
+## Installation ![Static Badge](https://img.shields.io/badge/Difficulty-Advanced-yellow)
 
 Metrics dashboard
 Copyright © 2024 Shields.io. Built with Docusaurus.
