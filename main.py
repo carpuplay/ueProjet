@@ -1,7 +1,6 @@
 import os
 import time
 
-# Description: Main file for the game
 ### VARIABLES
 
 plateau_debut = [
@@ -32,7 +31,7 @@ PIONS = {0: " ", 1: "●", 2: "○"}
 pions_noirs = 8
 pions_blancs = 8
 
-def choisir_plateau():       #bon
+def choisir_plateau():       
     plateau_dico = { '1': plateau_debut, '2': plateau_milieu, '3': plateau_fin }
     while True:
         print("\033[1m\033[48;2;0;0;255mChoisissez un plateau de jeu :\033[0m")
@@ -43,7 +42,7 @@ def choisir_plateau():       #bon
             print("Choix invalide. Veuillez entrer 1, 2 ou 3.")
 
 
-def afficher_plateau(plateau):   #bon
+def afficher_plateau(plateau):   
     # Couleurs pour les pions
     couleur_pion = {1: '\033[91m', 2: '\033[96m', 0: '\033[0m'}
     print('     1   2   3   4')
@@ -54,7 +53,7 @@ def afficher_plateau(plateau):   #bon
         print()
 
 
-def demander_mouvement(joueur):   #bon
+def demander_mouvement(joueur):   #Demande au joueur de rentrer un deplacement
     couleur_joueur = '\033[91m' if joueur == 1 else '\033[96m'
     while True:
         deplacement = input(f"{couleur_joueur}Joueur {joueur}\033[0m , entrez votre deplacement (ex: A1 B2) : ")
@@ -70,7 +69,7 @@ def demander_mouvement(joueur):   #bon
 def valider_format_saisie(deplacement):
     return len(deplacement) == 5 and deplacement[2] == " "
 
-def est_au_bon_format(case1, case2):
+def est_au_bon_format(case1, case2):   #Verifie si les cases sont sous un format valide
   num_valide = ["1", "2", "3", "4"]
   lettre_valide = "ABCD"
   return case1[0] in lettre_valide and case1[1] in num_valide and case2[0] in lettre_valide and case2[1] in num_valide
@@ -102,42 +101,18 @@ def deplacer_pion(plateau, case1, case2, joueur):   #bon
     return False
 
 def verifier_victoire(plateau, tour):
-    """
-    Verifica si hay un ganador en el juego.
-
-    Args:
-        plateau (list): El tablero de juego.
-        tour (int): El turno del jugador actual.
-
-    Returns:
-        int: El resultado del juego.
-            - 1: Si gana el jugador negro.
-            - 2: Si gana el jugador blanco.
-            - 0: Si el juego continúa.
-            - -1: Si es un empate.
-
-    """
     pions_noirs, pions_blancs = compter_pions(plateau)
     
     if (pions_blancs < 2 and pions_noirs >= 2) or (not peut_deplacer(plateau, 2)):
-        return 1  # Gana el jugador negro
+        return 1  # Joueur 1 gagne
     elif (pions_noirs < 2 and pions_blancs < 2) or (not peut_deplacer(plateau, 1) and not peut_deplacer(plateau, 2)):
-        return -1  # Empate
+        return -1  # Egalité (peu probable mais evitie des bugs)
     elif (pions_noirs < 2 and pions_blancs >= 2) or (not peut_deplacer(plateau, 1)):
-        return 2  # Gana el jugador blanco (el negro no puede moverse)
+        return 2  # Le Joueur 2 gagne
     else:
         return 0  # Continúa el juego
 
-def compter_pions(plateau):
-    """
-    Cuenta el número de fichas de cada jugador en el tablero.
-
-    Args:
-        plateau (list): El tablero de juego.
-
-    Returns:
-        tuple: Una tupla con el número de fichas para el jugador negro y el jugador blanco, respectivamente.
-    """
+def compter_pions(plateau):  #Compte les pions
     pions_noirs = 0
     pions_blancs = 0
     for ligne in plateau:
@@ -150,7 +125,7 @@ def compter_pions(plateau):
 
 
 
-def peut_deplacer(plateau, joueur):
+def peut_deplacer(plateau, joueur):     #Execute les fonctions de test de mouvement pour chaque case du jeux si il y a un pion
     for ligne_index, ligne in enumerate(plateau):
         for case_index, case in enumerate(ligne):
             if case == joueur:
@@ -158,7 +133,7 @@ def peut_deplacer(plateau, joueur):
                     return True
     return False
 
-def peut_sauter(plateau, joueur, ligne_index, case_index):
+def peut_sauter(plateau, joueur, ligne_index, case_index): #Fonction qui verifie si un pion peut realiser un deplacement en saut
     if ligne_index >= 2 and case_index >= 2 and plateau[ligne_index-1][case_index-1] != 0 and plateau[ligne_index-1][case_index-1] != joueur and plateau[ligne_index-2][case_index-2] == 0:
         return True
     elif ligne_index >= 2 and case_index <= len(plateau[0]) - 3 and plateau[ligne_index-1][case_index+1] != 0 and plateau[ligne_index-1][case_index+1] != joueur and plateau[ligne_index-2][case_index+2] == 0:
@@ -170,7 +145,7 @@ def peut_sauter(plateau, joueur, ligne_index, case_index):
     return False
 
 
-def peut_deplacer_normal(plateau, joueur, ligne_index, case_index):
+def peut_deplacer_normal(plateau, joueur, ligne_index, case_index): #Fontion qui verifie si un pion peut realiser un deplacement simple
     if ligne_index >= 1 and case_index >= 1 and plateau[ligne_index-1][case_index-1] == 0:
         return True
     if ligne_index >= 1 and case_index <= len(plateau[0]) - 2 and plateau[ligne_index-1][case_index+1] == 0:
@@ -227,20 +202,20 @@ def main():
     plateau = choisir_plateau()
     afficher_plateau(plateau)
     joueur = 1
-    while True:
+    while True:  # Boucle de jeu
         deplacement = demander_mouvement(joueur)
         if deplacer_pion(plateau, deplacement[0], deplacement[1], joueur):
             clear_console()
             afficher_plateau(plateau)
-            pions_noirs, pions_blancs = compter_pions(plateau)
+            pions_noirs, pions_blancs = compter_pions(plateau)  # Compter les pions
             print(f"Joueur 1: {pions_noirs} pions")
             print(f"Joueur 2: {pions_blancs} pions")
-            victoire = verifier_victoire(plateau, joueur)
+            victoire = verifier_victoire(plateau, joueur)  # Vérifier si un joueur a gagné
             if victoire:
                 print(f"\033[33m\033[1mLe joueur {victoire} a gagné !\033[0m")
                 break
             joueur = 1 if joueur == 2 else 2
-        else:
+        else:   # Si le déplacement est invalide
             print("\033[91mDeplacement invalide. Veuillez entrer un deplacement valide.\033[0m")
 
     print("Merci d'avoir joué !")
