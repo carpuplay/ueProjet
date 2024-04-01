@@ -12,8 +12,6 @@ This repository contains the project for the UE Projet course. It includes the "
 
 ## Installation ![Static Badge](https://img.shields.io/badge/Difficulty-Advanced-yellow)
 
-Metrics dashboard
-Copyright © 2024 Shields.io. Built with Docusaurus.
 To run the game, follow these steps:
 1. Clone the repository: `git clone https://github.com/your-username/ueProjet.git`
 2. Navigate to the project directory: `cd ueProjet`
