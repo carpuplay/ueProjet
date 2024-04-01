@@ -14,8 +14,7 @@ This repository contains the project for the UE Projet course. It includes the "
 To run the game, follow these steps:
 1. Clone the repository: `git clone https://github.com/your-username/ueProjet.git`
 2. Navigate to the project directory: `cd ueProjet`
-3. Install the dependencies: `npm install`
-4. Start the game: `npm start`
+3. Start the game: `python main.py`
 
 ## System Compatibility
 The "Jeux des Canaries" game is compatible with the following operating systems:
