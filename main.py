@@ -31,6 +31,8 @@ PIONS = {0: " ", 1: "●", 2: "○"}
 pions_noirs = 8
 pions_blancs = 8
 
+
+### FONCTIONS
 def choisir_plateau():       
     plateau_dico = { '1': plateau_debut, '2': plateau_milieu, '3': plateau_fin }
     while True:
