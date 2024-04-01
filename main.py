@@ -80,7 +80,7 @@ def convertir_case(case):
     return (ord(case[0].lower()) - ord('a'), int(case[1])-1)
 
 
-def deplacer_pion(plateau, case1, case2, joueur):   #bon
+def deplacer_pion(plateau, case1, case2, joueur):   #Deplace un pion
     # Convertir les cases en index
     case1_index = (ord(case1[0].lower()) - ord('a'), int(case1[1])-1)
     case2_index = (ord(case2[0].lower()) - ord('a'), int(case2[1])-1)
