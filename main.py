@@ -112,7 +112,7 @@ def verifier_victoire(plateau, tour):
     elif (pions_noirs < 2 and pions_blancs >= 2) or (not peut_deplacer(plateau, 1)):
         return 2  # Le Joueur 2 gagne
     else:
-        return 0  # Continúa el juego
+        return 0  # Pas de victoire
 
 def compter_pions(plateau):  #Compte les pions
     pions_noirs = 0
