@@ -68,37 +68,35 @@ def afficher_plateau(plateau):
             print(couleur_pion[case] + PIONS[case] + '\033[0m' + ' | ', end='')
         print()
 
-def generer_deplacements_posibles(posicion_pion):
-    # Coordenadas relativas para los posibles desplazamientos
-    desplazamientos = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-    deplacements_possibles = []
+def compter_pions(plateau):
+    position_pions_noirs = []
+    position_pions_blancs = []
+
+    for i in range(len(plateau)):
+        for j in range(len(plateau[i])):
+            if plateau[i][j] == 1:
+                position_pions_noirs.append((i, j))
+            elif plateau[i][j] == 2:
+                position_pions_blancs.append((i, j))
+
+    pions_noirs = len(position_pions_noirs)
+    pions_blancs = len(position_pions_blancs)
+    print("Position pions noirs: ", position_pions_noirs)
+    return pions_noirs, pions_blancs, position_pions_noirs, position_pions_blancs
+
+
+def generer_deplacements_posibles(plateau, position_pion, joueur):
+    deplacements = [(0, 1), (1, 0), (0, -1), (-1, 0), (2, 0), (-2, 0), (0, 2), (0, -2)]
+    destinations_possibles = []
     
-    # Calcular las coordenadas de los posibles desplazamientos
-    for dx, dy in desplazamientos:
-        x, y = posicion_pion[0] + dx, posicion_pion[1] + dy
-        deplacements_possibles.append((x, y))
+    for dx, dy in deplacements:
+        x, y = position_pion[0] + dx, position_pion[1] + dy
+        if peut_deplacer_normal(plateau, joueur, x, y) or peut_sauter(plateau, joueur, x, y):
+            destinations_possibles.append((x, y))
     
-    return deplacements_possibles
-
-def deplacement_ia(plateau):
-    pions_noirs, pions_blancs, position_pions_noirs, position_pions_blancs = compter_pions(plateau)
-    position_pion_choisi = random.choice(position_pions_noirs[0] + position_pions_noirs[1])
-
-    print("Position pion choisi: ", position_pion_choisi)
-    
-    # Generar los posibles desplazamientos para el pion seleccionado
-    deplacements_possibles = generer_deplacements_posibles(position_pion_choisi)
-
-    while True:
-        deplacement = random.choice(deplacements_possibles)
-        print("Deplacement choisi: ", deplacement)
-        if peut_deplacer_normal(plateau, deplacement[0], deplacement[1], 1) or peut_sauter(plateau, deplacement[0], deplacement[1], 1):
-            return deplacer_pion(plateau, position_pion_choisi[0], position_pion_choisi[1], 1)
-        else:
-            return False # Si no hay movimientos posibles, salir del bucle
-
+    return destinations_possibles
+        
             
-
 def demander_mouvement(joueur):   #Demande au joueur de rentrer un deplacement
     couleur_joueur = '\033[91m' if joueur == 1 else '\033[96m'
     while True:
@@ -122,6 +120,32 @@ def est_au_bon_format(case1, case2):   #Verifie si les cases sont sous un format
 
 def convertir_case(case):
     return (ord(case[0].lower()) - ord('a'), int(case[1])-1)
+
+def convertir_indices_a_coord(i, j):
+    lettre = chr(j + ord('a')).upper()
+    numero = str(i + 1)
+    return lettre + numero
+
+
+def deplacement_ia(plateau):
+    while True:
+        pions_noirs, pions_blancs, position_pions_noirs, position_pions_blancs = compter_pions(plateau)
+        nbr_aleratoire = random.randint(0, len(position_pions_noirs) - 1)
+        position_pion_choisi = position_pions_noirs[nbr_aleratoire]
+
+        print("Position pion choisi: ", position_pion_choisi)
+        destinations_possibles = generer_deplacements_posibles(plateau, position_pion_choisi, 1)
+        
+        if destinations_possibles:
+            nbr_random = random.randint(0, len(destinations_possibles) - 1)
+            print("Raw move: ", destinations_possibles[nbr_random])
+            deplacement = destinations_possibles[nbr_random]
+            coord_init = convertir_indices_a_coord(position_pion_choisi[0], position_pion_choisi[1])
+            coord_dest = convertir_indices_a_coord(int(position_pion_choisi[0] + (deplacement[0])), int(position_pion_choisi[1] + (deplacement[1])))
+            if est_au_bon_format(coord_init, coord_dest):
+                print("Deplacement: ", coord_init, coord_dest)
+                if deplacer_pion(plateau, coord_init, coord_dest, 1):
+                    break
 
 
 def deplacer_pion(plateau, case1, case2, joueur):   #Deplace un pion
@@ -147,7 +171,7 @@ def deplacer_pion(plateau, case1, case2, joueur):   #Deplace un pion
     return False
 
 def verifier_victoire(plateau, tour):
-    pions_noirs, pions_blancs = compter_pions(plateau)
+    pions_noirs, pions_blancs, position_pions_noirs, position_pions_blancs   = compter_pions(plateau)
     
     if (pions_blancs < 2 and pions_noirs >= 2) or (not peut_deplacer(plateau, 2)):
         return 1  # Joueur 1 gagne
@@ -157,21 +181,6 @@ def verifier_victoire(plateau, tour):
         return 2  # Le Joueur 2 gagne
     else:
         return 0  # Pas de victoire
-
-def compter_pions(plateau):  #Compte les pions
-    position_pions_noirs = []
-    position_pions_blancs = []
-    pions_noirs = len(position_pions_noirs)
-    pions_blancs = len(position_pions_blancs)
-
-    for ligne in plateau:
-        for case in ligne:
-            if case == 1:
-                position_pions_noirs.append((ligne,case))
-            elif case == 2:
-                position_pions_blancs.append((ligne,case))
-    return pions_noirs, pions_blancs, position_pions_noirs, position_pions_blancs
-
 
 
 def peut_deplacer(plateau, joueur):     #Execute les fonctions de test de mouvement pour chaque case du jeux si il y a un pion
@@ -258,6 +267,8 @@ def main():
         afficher_plateau(plateau)
         while True:  # Boucle de jeu
             if joueur == 1:
+                clear_console()
+                afficher_plateau(plateau)
                 deplacement_ia(plateau)
               
                 if verifier_victoire(plateau, joueur):
@@ -271,7 +282,7 @@ def main():
                 if deplacer_pion(plateau, deplacement[0], deplacement[1], joueur):
                     clear_console()
                     afficher_plateau(plateau)
-                    pions_noirs, pions_blancs = compter_pions(plateau)
+                    pions_noirs, pions_blancs, position_pions_noirs, position_pions_blancs = compter_pions(plateau)
                     print(f"Joueur 1: {pions_noirs} pions")
                     print(f"Joueur 2: {pions_blancs} pions")
                     victoire = verifier_victoire(plateau, joueur)
@@ -296,7 +307,7 @@ def main():
             if deplacer_pion(plateau, deplacement[0], deplacement[1], joueur):
                 clear_console()
                 afficher_plateau(plateau)
-                pions_noirs, pions_blancs = compter_pions(plateau)  # Compter les pions
+                pions_noirs, pions_blancs, position_pions_noirs, position_pions_blancs = compter_pions(plateau)
                 print(f"Joueur 1: {pions_noirs} pions")
                 print(f"Joueur 2: {pions_blancs} pions")
                 victoire = verifier_victoire(plateau, joueur)  # Vérifier si un joueur a gagné
