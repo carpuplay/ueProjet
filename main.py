@@ -144,7 +144,9 @@ def deplacement_ia(plateau):
             coord_dest = convertir_indices_a_coord(int(position_pion_choisi[0] + (deplacement[0])), int(position_pion_choisi[1] + (deplacement[1])))
             if est_au_bon_format(coord_init, coord_dest):
                 print("Deplacement: ", coord_init, coord_dest)
+                print(deplacer_pion(plateau, coord_init, coord_dest, 1))
                 if deplacer_pion(plateau, coord_init, coord_dest, 1):
+                    print("Deplacement effectué")
                     break
 
 
@@ -203,16 +205,21 @@ def peut_sauter(plateau, joueur, ligne_index, case_index): #Fonction qui verifie
     return False
 
 
-def peut_deplacer_normal(plateau, joueur, ligne_index, case_index): #Fontion qui verifie si un pion peut realiser un deplacement simple
-    if ligne_index >= 1 and case_index >= 1 and plateau[ligne_index-1][case_index-1] == 0:
+def peut_deplacer_normal(plateau, joueur, ligne_index, case_index):
+    max_row = len(plateau) - 1
+    max_col = len(plateau[0]) - 1
+
+    # Check if the move is within the boundaries and the destination is empty
+    if (ligne_index >= 1 and case_index >= 1 and plateau[ligne_index-1][case_index-1] == 0) or \
+       (ligne_index >= 1 and case_index <= max_col - 1 and plateau[ligne_index-1][case_index+1] == 0) or \
+       (ligne_index <= max_row - 1 and case_index >= 1 and plateau[ligne_index+1][case_index-1] == 0) or \
+       (ligne_index <= max_row - 1 and case_index <= max_col - 1 and plateau[ligne_index+1][case_index+1] == 0):
         return True
-    if ligne_index >= 1 and case_index <= len(plateau[0]) - 2 and plateau[ligne_index-1][case_index+1] == 0:
-        return True
-    if ligne_index <= len(plateau) - 2 and case_index >= 1 and plateau[ligne_index+1][case_index-1] == 0:
-        return True
-    if ligne_index <= len(plateau) - 2 and case_index <= len(plateau[0]) - 2 and plateau[ligne_index+1][case_index+1] == 0:
-        return True
+
     return False
+
+
+
 
 
 def clear_console():
@@ -410,7 +417,7 @@ def test_peut_deplacer_normal():
         [2, 2, 2, 2],
         [2, 2, 2, 2],
     ]
-    assert peut_deplacer_normal(plateau, 1, 0, 0) == False, "Test 3: peut_deplacer_normal(plateau, 1, 0, 0) == False"
+    assert peut_deplacer_normal(plateau, 1, 0, 1) == True, "Test 3: peut_deplacer_normal(plateau, 1, 0, 1) == True"
     assert peut_deplacer_normal(plateau, 2, 0, 0) == False, "Test 4: peut_deplacer_normal(plateau, 2, 0, 0) == False"
     
     plateau = [
